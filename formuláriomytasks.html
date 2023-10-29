@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulário MyTask</title>
+    <!-- Adequação de CSS-->
+</head>
+<body>
+    <h1>Formulário MyTask</h1>
+    <form>
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" required><br><br>
+
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" required><br><br>
+
+        <label for="horario">Horário:</label>
+        <input type="text" id="horario" name="horario" pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$" placeholder="HH:MM" required><br><br>
+        
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" rows="4" cols="50" required></textarea><br><br>
+
+        <input type="submit" value="Enviar">
+    </form>
+
+    <!-- Adequação de JavaScript -->
+</body>
+</html>
