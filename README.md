@@ -6,7 +6,9 @@ My Tasks é um aplicativo de gerenciamento de tarefas, promovendo de forma pragm
 
 a) O aplicativo deverá permitir que o usuário gerencie seu cronograma diário, cefetuando as seguintes ações: adicionar novas tarefas, efetuar alterações nos campos descritivos e selecionar as concluídas, resultando em sua exclusão.
 
-
+Para teste: 
+Usuario: login
+Senha: login
 ## 1. Descrições de Caso de Uso
 
 # 1.1. Criar Nova Tarefa (CDU001)
