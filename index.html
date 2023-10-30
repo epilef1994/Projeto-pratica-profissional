@@ -24,13 +24,18 @@
             text-align: center;
         }
 
-        #todo-list {
+        .login {
+            margin-top: 20px;
+        }
+
+        #todo-list, #add-task-form {
             background-color: #4682b4;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             max-width: 400px;
             text-align: center;
+            display: none;
         }
 
         h2 {
@@ -39,25 +44,7 @@
             margin-bottom: 10px;
         }
 
-        .profile-picture {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: #007bff;
-            margin: 0 auto 10px;
-        }
-
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .header-text {
-            margin-top: 10px;
-        }
-
-        input[type="text"], input[type="password"], input[type="task"], input[type="date"] {
+        input[type="text"], input[type="password"], input[type="task"], input[type="date"], select {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -89,22 +76,28 @@
             padding: 0;
         }
 
+        .task-list {
+            max-height: 220px; /* Altura máxima da lista antes do scroll aparecer */
+            overflow-y: auto; /* Ativar scroll vertical quando necessário */
+        }
+
         .task-card {
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
             margin: 10px 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column; /* Organiza os elementos em coluna */
+            align-items: center; /* Centraliza os elementos horizontalmente */
             background-color: #F1FFF0;
             position: relative;
         }
 
         .task-text {
-            flex: 1;
             font-size: 18px;
             word-break: break-word;
+            margin: 10px 0; /* Espaço entre os elementos */
+            font-weight: bold; /* Deixa o texto em negrito */
         }
 
         .delete-button {
@@ -131,37 +124,6 @@
         .date-display {
             font-size: 16px;
             color: #fff;
-            margin-top: 10px; /* Ajuste a margem para mover a data mais próxima do título */
-        }
-
-        /* Estilos adicionais */
-        #login-form {
-            border: none;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        }
-
-        #login-form h2 {
-            color: #fff;
-        }
-
-        #login-form input[type="text"], #login-form input[type="password"], #login-form input[type="date"] {
-            border-color: #ccc;
-            color: #333;
-        }
-
-        #login-form button {
-            background-color: #87CBF9;
-        }
-
-        #login-form button:hover {
-            background-color: #74c3f8;
-        }
-
-        /* Estilos para a lista de tarefas */
-        .task-list {
-            max-height: 150px; /* Altura máxima da lista antes do scroll aparecer */
-            overflow-y: auto; /* Ativar scroll vertical quando necessário */
-            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -170,10 +132,10 @@
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Username" value="">
         <input type="password" id="password" placeholder="Password" value="">
-        <button onclick="login()" style="margin-top: 20px;">Login</button>
+        <button class="login" onclick="login()">Login</button>
     </div>
 
-    <div id="todo-list" style="display: none;">
+    <div id="todo-list">
         <div class="header">
             <div class="profile-picture"></div>
             <div class="header-text">
@@ -181,29 +143,45 @@
                 <p class="date-display" id="current-date"></p>
             </div>
         </div>
-        <input type="text" id="task" placeholder="Add a new task" onkeypress="addTaskOnEnter(event)">
-        <button onclick="addTask()" style="margin-top: 10px;">Add Task</button>
-        <div class="task-list">
-            <ul id="task-list">
-                <!-- Tasks will be added here as cards -->
-            </ul>
-        </div>
+        <button onclick="redirectToTaskPage()" style="margin-bottom: 20px;">Add Task</button>
+        <ul class="task-list">
+            <!-- Tasks will be added here as cards -->
+        </ul>
         <button class="logout-button" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="add-task-form">
+        <h2>Add Task</h2>
+        <input type="text" id="task-title" placeholder="Title" value="">
+        <input type="text" id="task-description" placeholder="Description" value="">
+        <input type="date" id="task-date" placeholder="Date" value="">
+        <select id="day-of-week" placeholder="Day of the week">
+            <option value="Sunday">Domingo</option>
+            <option value="Monday">Segunda-feira</option>
+            <option value="Tuesday">Terça-feira</option>
+            <option value="Wednesday">Quarta-feira</option>
+            <option value="Thursday">Quinta-feira</option>
+            <option value="Friday">Sexta-feira</option>
+            <option value="Saturday">Sábado</option>
+        </select>
+        <button onclick="addTask()" style="margin-top: 20px;">Add Task</button>
+        <button onclick="returnToMain()" style="margin-top: 20px;">Return to Main</button>
     </div>
 
     <script>
         let isLoggedIn = false;
         const loginForm = document.getElementById("login-form");
         const todoList = document.getElementById("todo-list");
+        const addTaskForm = document.getElementById("add-task-form");
         const currentDateElement = document.getElementById("current-date");
-        
+
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
             // Replace this with your own authentication logic
             // For simplicity, we're using a hardcoded username and password
-            if (username === "" && password === "") {
+            if (username === "login" && password === "login") {
                 isLoggedIn = true;
                 loginForm.style.display = "none";
                 todoList.style.display = "block";
@@ -219,56 +197,84 @@
             todoList.style.display = "none";
         }
 
+        function redirectToTaskPage() {
+            todoList.style.display = "none";
+            addTaskForm.style.display = "block";
+        }
+
         function addTask() {
-            if (!isLoggedIn) {
-                alert("Please login first.");
-                return;
-            }
+            const title = document.getElementById("task-title").value;
+            const description = document.getElementById("task-description").value;
+            const taskDate = document.getElementById("task-date").value;
+            const dayOfWeek = document.getElementById("day-of-week").value;
 
-            const taskText = document.getElementById("task").value;
-            if (!taskText) {
-                alert("Please enter a task.");
-                return;
-            }
+            const task = { title, description, date: taskDate, dayOfWeek };
+            addTaskToList(task);
+            returnToMain();
+        }
 
-            const taskList = document.getElementById("task-list");
+        function returnToMain() {
+            todoList.style.display = "block";
+            addTaskForm.style.display = "none";
+        }
+
+        function addTaskToList(task) {
+            const taskList = document.querySelector(".task-list");
             const li = document.createElement("li");
             li.classList.add("task-card");
-            
-            const taskTextElement = document.createElement("div");
-            taskTextElement.classList.add("task-text");
-            taskTextElement.textContent = taskText;
-            li.appendChild(taskTextElement);
+
+            const titleElement = document.createElement("div");
+            titleElement.classList.add("task-text");
+            titleElement.innerHTML = `<strong>Title:</strong> ${task.title}`;
+            li.appendChild(titleElement);
+
+            const descriptionElement = document.createElement("div");
+            descriptionElement.classList.add("task-text");
+            descriptionElement.innerHTML = `<strong>Description:</strong> ${task.description}`;
+            li.appendChild(descriptionElement);
+
+            const dateElement = document.createElement("div");
+            dateElement.classList.add("task-text");
+            dateElement.innerHTML = `<strong>Date:</strong> ${formatDate(task.date)}`;
+            li.appendChild(dateElement);
+
+            const dayOfWeekElement = document.createElement("div");
+            dayOfWeekElement.classList.add("task-text");
+            dayOfWeekElement.innerHTML = `<strong>Day:</strong> ${translateDayOfWeek(task.dayOfWeek)}`;
+            li.appendChild(dayOfWeekElement);
 
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("delete-button");
-            deleteButton.appendChild(document.createTextNode("x"));
-            deleteButton.onclick = function () {
-                li.remove();
-                updateScroll();
+            deleteButton.textContent = "x";
+            deleteButton.onclick = function() {
+                deleteTask(this);
             };
             li.appendChild(deleteButton);
 
             taskList.appendChild(li);
-
-            document.getElementById("task").value = "";
-            updateScroll();
         }
 
-        function addTaskOnEnter(event) {
-            if (event.key === "Enter") {
-                addTask();
-            }
+        function formatDate(date) {
+            const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+            return new Date(date).toLocaleDateString("pt-BR", options);
         }
 
-        function updateScroll() {
-            const taskList = document.querySelector(".task-list");
-            const taskItems = document.querySelectorAll(".task-card");
-            if (taskItems.length >= 3) {
-                taskList.style.overflowY = "scroll";
-            } else {
-                taskList.style.overflowY = "hidden";
-            }
+        function translateDayOfWeek(day) {
+            const daysOfWeek = {
+                "Sunday": "Domingo",
+                "Monday": "Segunda-feira",
+                "Tuesday": "Terça-feira",
+                "Wednesday": "Quarta-feira",
+                "Thursday": "Quinta-feira",
+                "Friday": "Sexta-feira",
+                "Saturday": "Sábado"
+            };
+            return daysOfWeek[day];
+        }
+
+        function deleteTask(button) {
+            const taskCard = button.parentElement;
+            taskCard.remove();
         }
 
         function displayCurrentDate() {
